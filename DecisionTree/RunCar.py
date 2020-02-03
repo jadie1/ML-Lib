@@ -15,6 +15,6 @@ def getData(csvFile):
 if __name__ == "__main__":
 	train_data, train_labels = getData("car/train.csv")
 	test_data, test_labels = getData("car/test.csv")
-	heuristic = "info_gain"
+	heuristic = "gini_index"
 	max_depth = 100
 	tree = DecisionTree.ID3(train_data, train_labels, heuristic, max_depth)
