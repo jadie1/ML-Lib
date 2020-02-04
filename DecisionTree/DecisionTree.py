@@ -89,19 +89,43 @@ def ID3(data, labels, values, heurisitic, current_depth, max_depth):
 	else:
 		current_depth += 1
 		attr_index = getBestAttribute(data, labels, heurisitic)
-		node['nodes'] = {}
-		possible_values = values[attr_index]
+		# input(values[attr_index])
+		name = values[attr_index][0]
+		node[name] = {}
+		possible_values = values[attr_index][1]
 		unique_values = np.unique(data[:, attr_index])
 		for value in possible_values:
 			# if no examples add most common label
 			if value not in unique_values:
-				node['nodes'][value] = {'label':getMostCommonLabel(labels)}
+				node[name][value] = {'label':getMostCommonLabel(labels)}
 			# else recursive call
 			else:
 				subset_data, subset_labels, subset_values = getDataSubset(data, labels, values, attr_index, value)
-				node['nodes'][value] = ID3(subset_data, subset_labels, subset_values, heurisitic, current_depth, max_depth)
+				node[name][value] = ID3(subset_data, subset_labels, subset_values, heurisitic, current_depth, max_depth)
 		return node
 
-		
 
+def traceback(example, tree):
+	if list(tree.keys())[0] == "label":
+		return tree["label"]
+	else:
+		key = list(tree.keys())[0]
+		value = example[key]
+		subtree = tree[key][value]
+		label = traceback(example, subtree)
+		return label
+
+
+def testTree(tree, data, labels):
+	correct = 0
+	for index in range(len(data)):
+		example = data[index]
+		label = labels[index]
+		prediction = traceback(example, tree)
+		if prediction == label:
+			correct += 1
+	accuracy = correct / len(labels)
+	return accuracy
+	
+		
 
