@@ -8,6 +8,15 @@ def getMostCommonLabel(labels):
 	maxpos = counts.argmax()
 	return(unique[maxpos])
 
+def getDataSubset(data, labels, values, attr_index, value):
+	indices = np.where(data[:,attr_index] == value)
+	subset_data = data[indices,:][0]
+	subset_data = np.delete(subset_data, attr_index, 1)
+	subset_labels = labels[indices]
+	subset_values = np.delete(values, attr_index, 0)
+	return subset_data, subset_labels, subset_values
+
+
 def getBestAttribute(data, labels, heuristic):
 	# define heuristic call
 	if heuristic == "information_gain":
@@ -20,7 +29,7 @@ def getBestAttribute(data, labels, heuristic):
 		print("Error heuristic unimplemented. \n Please use information_gain, gini_index, or majority_error.")
 	# get total value
 	total_entropy = heuristic_call(labels)
-	max_gain = 0
+	max_gain = -1
 	# loop through attributes and get gain for each
 	attr_index = 0
 	for attr_data in data.T:
@@ -38,7 +47,7 @@ def getBestAttribute(data, labels, heuristic):
 			max_gain = attr_gain
 			best_attr = attr_index
 		attr_index += 1
-	return attr_index
+	return best_attr
 
 #### Heurisitcs
 def getEntropy(labels):
@@ -67,25 +76,32 @@ def getMajorityError(labels):
 	ME = (sumCounts - maxCount)/sumCounts
 	return ME
 
-
-
-def ID3(data, labels, heurisitic, max_depth):
+def ID3(data, labels, values, heurisitic, current_depth, max_depth):
 	node = {}
 	# base case
 	if np.unique(labels).shape[0] == 1:
-		print("base case")
 		node['label'] = labels[0]
 		return node
-	# out of attributes
-	elif data.shape == 0:
-		print("out of attributes")
+	# out of attributes or max depth reached
+	elif data.shape[0] == 0 or current_depth == max_depth:
 		node['label'] = getMostCommonLabel(labels)
 		return node
 	else:
-		print("get best attr")
-		attr = getBestAttribute(data, labels, heurisitic)
-		print(attr)
+		current_depth += 1
+		attr_index = getBestAttribute(data, labels, heurisitic)
+		node['nodes'] = {}
+		possible_values = values[attr_index]
+		unique_values = np.unique(data[:, attr_index])
+		for value in possible_values:
+			# if no examples add most common label
+			if value not in unique_values:
+				node['nodes'][value] = {'label':getMostCommonLabel(labels)}
+			# else recursive call
+			else:
+				subset_data, subset_labels, subset_values = getDataSubset(data, labels, values, attr_index, value)
+				node['nodes'][value] = ID3(subset_data, subset_labels, subset_values, heurisitic, current_depth, max_depth)
 		return node
+
 		
 
 
