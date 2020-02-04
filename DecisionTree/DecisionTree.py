@@ -2,6 +2,7 @@
 import numpy as np
 import math
 
+### ID3 Helpers ##########################################################################
 def getMostCommonLabel(labels):
 	unique,pos = np.unique(labels,return_inverse=True) 
 	counts = np.bincount(pos)
@@ -15,7 +16,6 @@ def getDataSubset(data, labels, values, attr_index, value):
 	subset_labels = labels[indices]
 	subset_values = np.delete(values, attr_index, 0)
 	return subset_data, subset_labels, subset_values
-
 
 def getBestAttribute(data, labels, heuristic):
 	# define heuristic call
@@ -76,20 +76,20 @@ def getMajorityError(labels):
 	ME = (sumCounts - maxCount)/sumCounts
 	return ME
 
+################### ID3 Algorithm ####################################################################
 def ID3(data, labels, values, heurisitic, current_depth, max_depth):
 	node = {}
-	# base case
+	# base case, all remaining labels are the same
 	if np.unique(labels).shape[0] == 1:
 		node['label'] = labels[0]
 		return node
-	# out of attributes or max depth reached
+	# out of attributes or max depth reached add most common label
 	elif data.shape[0] == 0 or current_depth == max_depth:
 		node['label'] = getMostCommonLabel(labels)
 		return node
 	else:
 		current_depth += 1
 		attr_index = getBestAttribute(data, labels, heurisitic)
-		# input(values[attr_index])
 		name = values[attr_index][0]
 		node[name] = {}
 		possible_values = values[attr_index][1]
@@ -104,7 +104,9 @@ def ID3(data, labels, values, heurisitic, current_depth, max_depth):
 				node[name][value] = ID3(subset_data, subset_labels, subset_values, heurisitic, current_depth, max_depth)
 		return node
 
+############### Testing functions ######################################################################################3
 
+# test tree helper
 def traceback(example, tree):
 	if list(tree.keys())[0] == "label":
 		return tree["label"]
@@ -114,7 +116,6 @@ def traceback(example, tree):
 		subtree = tree[key][value]
 		label = traceback(example, subtree)
 		return label
-
 
 def testTree(tree, data, labels):
 	correct = 0
