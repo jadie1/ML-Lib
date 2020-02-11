@@ -1,6 +1,8 @@
 # Jadie Adams
 import DecisionTree
 import numpy as np 
+import math
+
 
 # returns np array of arttributes and labels
 def getData(csvFile):

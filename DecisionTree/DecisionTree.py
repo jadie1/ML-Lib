@@ -56,7 +56,8 @@ def getEntropy(labels):
 	counts = np.bincount(pos)
 	probs = counts/np.sum(counts)
 	for prob in probs:
-		entropy += -(prob)*math.log(prob,2)
+		if prob != 0:
+			entropy += -(prob)*math.log(prob,2)
 	return entropy
 
 def getGiniIndex(labels):
