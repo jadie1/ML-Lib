@@ -1,29 +1,20 @@
 # Jadie Adams
 import DecisionTree
-import numpy as np 
-import math
-
-
-# returns np array of arttributes and labels
-def getData(csvFile):
-	data = []
-	with open(csvFile, 'r') as f:
-		for line in f:
-			data.append(line.strip().split(','))
-	data = np.array(data)
-	return data[:,:-1], data[:,-1]
+import numpy as np
+import sys
+sys.path.append("..")
+import DataUtils
 
 if __name__ == "__main__":
 	output = open("CarResults.csv", "w+")
 	output.write("heuristic, depth, train accuracy, test accuracy \n")
-	train_data, train_labels = getData("car/train.csv")
+	train_data, train_labels, test_data, test_labels = DataUtils.getData('../Data/car')
 	train_values = [[0,np.array(['vhigh', 'high', 'med', 'low'])],
 		[1,np.array(['vhigh', 'high', 'med', 'low'])],
 		[2,np.array(['2', '3', '4', '5more'])],
 		[3,np.array(['2', '4', 'more'])],
 		[4,np.array(['small', 'med', 'big'])],
 		[5,np.array(['low', 'med', 'high'])]]
-	test_data, test_labels = getData("car/test.csv")
 	heuristics = ["information_gain", "gini_index", "majority_error"]
 	for heuristic in heuristics:
 		print(heuristic)
