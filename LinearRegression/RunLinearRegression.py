@@ -9,13 +9,13 @@ if __name__ == "__main__":
 	# Get args
 	dataFolder = sys.argv[1]
 	gradient_descent_type = sys.argv[2]
-	learning_rate = sys.argv[3]
+	learning_rate = float(sys.argv[3])
 
 	# Get Data
 	train_data, train_labels, test_data, test_labels = DataUtils.getData(dataFolder)
 
 	# Run stochastic gradient descent
-	print("Training error:")
+	print("\n Training error:")
 	if gradient_descent_type == 'stochastic':
 		weights = LinearRegression.stochasticGradientDescent(learning_rate, train_data, train_labels)
 	elif gradient_descent_type == 'batch':
@@ -23,7 +23,15 @@ if __name__ == "__main__":
 	else:
 		print("Error gradient descent type not recognized.")
 
+	print("Final raining error:")
+	train_error = LinearRegression.test(weights, train_data, train_labels)
+	print(train_error)
+
+	print("Final weight vector:")
+	print(weights)
+
 	# Get test error
-	print("\n\n Testing error:")
-	test_error = LinearRegression.getError(weights, test_data, test_labels)
+	print("Testing error:")
+	test_error = LinearRegression.test(weights, test_data, test_labels)
 	print(test_error)
+	print()

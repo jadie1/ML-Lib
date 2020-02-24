@@ -1,7 +1,7 @@
 import numpy as np 
 import os
 
-stopping_threshold = 1*(10**-6)
+stopping_threshold = 1*(10**-5)
 
 def getError(w, inputs, labels):
     summation = 0
@@ -21,34 +21,36 @@ def getGradient(w, inputs, labels):
             sample = inputs[i][j]
             summation -= (label-prediction)*sample
         gradient_vector.append(summation)
-    return(np.array(gradient_vector).astype('float64'))
+    return(np.array(gradient_vector))
 
 def batchGradientDescent(learning_rate, data,labels):
-    w = np.zeros(data.shape[1] + 1).astype('float64')
+    w = np.zeros(data.shape[1] + 1)
     inputs = np.ones((data.shape[0], data.shape[1]+1))
     inputs[:,:-1] = data
-    inputs = inputs.astype('float64')
+    w_difference = 1
+    epoch_index = 0
     labels = labels.astype('float64')
     error = getError(w,inputs,labels)
-    print(error)
-    w_difference = 1
+    # print(epoch_index, error)
     while w_difference > stopping_threshold:
+        epoch_index += 1
         gradient = getGradient(w,inputs,labels)
         w_new = w - (learning_rate*gradient)
         w_difference = np.mean(np.abs(w-w_new))
         w = w_new
         error = getError(w,inputs,labels)
-        print(error)
+        # if epoch_index % 100 == 0:
+            # print(epoch_index, error)
+    # print(epoch_index, error)
     return w
 
 def stochasticGradientDescent(learning_rate,data,labels):
-    w = np.zeros(data.shape[1] + 1).astype('float64')
+    w = np.zeros(data.shape[1] + 1)
     inputs = np.ones((data.shape[0], data.shape[1]+1))
     inputs[:,:-1] = data
-    inputs = inputs.astype('float64')
     labels = labels.astype('float64')
     error = getError(w,inputs,labels)
-    print(error)
+    # print(error)
     w_difference = 1
     while w_difference > stopping_threshold:
         for index in range(inputs.shape[0]):
@@ -60,5 +62,12 @@ def stochasticGradientDescent(learning_rate,data,labels):
                 w_difference = np.mean(np.abs(w-w_new))
                 w = w_new
                 error = getError(w,inputs,labels)
-                print(error)
+                # print(error)
     return(w)
+
+
+def test(w, data, labels):
+    inputs = np.ones((data.shape[0], data.shape[1]+1))
+    inputs[:,:-1] = data
+    labels = labels.astype('float64')
+    return(getError(w, inputs, labels))
