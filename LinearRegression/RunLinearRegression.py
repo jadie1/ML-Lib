@@ -34,4 +34,4 @@ if __name__ == "__main__":
 	print("Testing error:")
 	test_error = LinearRegression.test(weights, test_data, test_labels)
 	print(test_error)
-	print()
+	print( )

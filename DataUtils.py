@@ -1,8 +1,8 @@
+# Jadie Adams
+
 import os
 import numpy as np
 import sys
-sys.path.append("DecisionTree/")
-import DecisionTree
 
 # Input: folder with train.csv and test.csv
 # Output: data_names, label_name, train_data, train_labels, test_data, test_labels
@@ -39,11 +39,17 @@ def binarize(data, indices):
 				binarized[example_index][index] = 'low'
 	return binarized
 
+def getMostCommonLabel(labels):
+	unique,pos = np.unique(labels,return_inverse=True) 
+	counts = np.bincount(pos)
+	maxpos = counts.argmax()
+	return(unique[maxpos])
+
 # replace values of "unknown" with most common value
 def replaceMissing(data, labels):
 	for index in range(data.shape[1]):
-		replace = DecisionTree.getMostCommonLabel(data[:,index][data[:,index] != "unknown"])
+		replace = getMostCommonLabel(data[:,index][data[:,index] != "unknown"])
 		data[:,index] = np.where(data[:,index] == "unknown", replace, data[:,index])
-	replace = DecisionTree.getMostCommonLabel(labels[labels != "unknown"])
+	replace = getMostCommonLabel(labels[labels != "unknown"])
 	labels = np.where(labels == "unknown", replace, labels)
 	return data, labels
