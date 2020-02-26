@@ -1,4 +1,5 @@
 # Jadie Adams
+# Example of decision tree using bank data
 import DecisionTree
 import numpy as np
 import sys
