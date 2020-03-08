@@ -53,3 +53,12 @@ def replaceMissing(data, labels):
 	replace = getMostCommonLabel(labels[labels != "unknown"])
 	labels = np.where(labels == "unknown", replace, labels)
 	return data, labels
+
+def fixLabels(labels):
+	new_labels = []
+	for label in labels:
+		if int(label) <= 0:
+			new_labels.append(-1)
+		else:
+			new_labels.append(1)
+	return(np.array(new_labels))
