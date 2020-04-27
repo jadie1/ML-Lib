@@ -1,4 +1,5 @@
 # Jadie Adams
+# Reference: https://towardsdatascience.com/lets-code-a-neural-network-in-plain-numpy-ae7e74410795
 import numpy as np 
 
 def get_archtecture(x_dim, hid_dim):
@@ -18,6 +19,18 @@ def initialize(arch, seed):
 		layer_output_size = layer["output_dim"]
 		params_values['W' + str(layer_idx)] = np.random.randn(layer_output_size, layer_input_size) * 0.1
 		params_values['b' + str(layer_idx)] = np.random.randn(layer_output_size, 1) * 0.1
+	return params_values
+
+def zero_initialize(arch, seed):
+	np.random.seed(seed)
+	number_of_layers = len(arch)
+	params_values = {}
+	for idx, layer in enumerate(arch):
+		layer_idx = idx+ 1
+		layer_input_size = layer["input_dim"]
+		layer_output_size = layer["output_dim"]
+		params_values['W' + str(layer_idx)] = np.zeros((layer_output_size, layer_input_size))
+		params_values['b' + str(layer_idx)] = np.zeros((layer_output_size, 1))
 	return params_values
 
 def sigmoid(Z):
@@ -59,7 +72,7 @@ def layer_back(dA_curr, W_curr, b_curr, Z_curr, A_prev):
 	dA_prev = np.dot(W_curr.T, dZ_curr)
 	return dA_prev, dW_curr, db_curr
 
-def backward_propagation(Y_hat, Y, memory, params_values, arch):
+def back_propogation(Y_hat, Y, memory, params_values, arch):
 	grads_values = {}
 	m = Y.shape[1]
 	Y = Y.reshape(Y_hat.shape)
@@ -104,7 +117,7 @@ def train(hid_dim, epochs, lr_func, data, labels):
 	Y = np.transpose(labels.reshape((labels.shape[0], 1)).astype('float64'))
 	arch = get_archtecture(data.shape[1], hid_dim)
 	init_seed = 2
-	params_values = initialize(arch, init_seed)
+	params_values = zero_initialize(arch, init_seed)
 	cost_history = []
 	accuracy_history = []
 	for t in range(epochs):
@@ -120,15 +133,8 @@ def train(hid_dim, epochs, lr_func, data, labels):
 			cost_history.append(cost)
 			accuracy = get_accuracy(Y_hat, y)
 			accuracy_history.append(accuracy)
-			grads_values = backward_propagation(Y_hat, y, cache, params_values, arch)
+			grads_values = back_propogation(Y_hat, y, cache, params_values, arch)
 			params_values = update(params_values, grads_values, arch, learning_rate)	
-		# Y_hat, cache = forward_propagation(X, params_values, arch)
-		# cost = get_cost_value(Y_hat, Y)
-		# cost_history.append(cost)
-		# accuracy = get_accuracy(Y_hat, Y)
-		# accuracy_history.append(accuracy)
-		# grads_values = backward_propagation(Y_hat, Y, cache, params_values, arch)
-		# params_values = update(params_values, grads_values, arch, learning_rate)	
 	return params_values
 
 def test(hid_dim, data, labels, params_values):

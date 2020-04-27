@@ -5,8 +5,7 @@ import NN
 import sys
 sys.path.append("..")
 import DataUtils
-from sklearn.datasets import make_moons
-from sklearn.model_selection import train_test_split
+ 
 d = 100
 init = 1
 def lrf(t):
@@ -20,11 +19,16 @@ if __name__ == "__main__":
 	train_labels = train_labels.astype('float64')
 	test_labels = test_labels.astype('float64')
 
+	epochs = 7
+	print(str(epochs) + " epochs.")
+
 	hidden_dims = [5,10,25,50,100]
 	for hid_dim in hidden_dims:
-		epochs = 2
+		print("Hidden dim width = " + str(hid_dim))
 		parameters = NN.train(hid_dim, epochs, lrf, train_data, train_labels)
 		train_accuracy = NN.test(hid_dim, train_data, train_labels, parameters)
-		print(train_accuracy)
+		print("    Train_accuracy: " + str(train_accuracy))
 		test_accuracy = NN.test(hid_dim, test_data, test_labels, parameters)
-		print(test_accuracy)
+		print("    Test accuracy: " + str(test_accuracy))
+
+
